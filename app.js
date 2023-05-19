@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 // const bcrypt = require("bcrypt");
+const format = require("date-fns/format");
 
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
@@ -94,7 +95,7 @@ app.get("/todos/", async (request, response) => {
       );
     } else {
       response.status(400);
-      response.send("Invalid Status");
+      response.send("Invalid Todo Status");
     }
   } else if (category !== undefined) {
     if (category === "WORK" || category === "HOME" || category === "LEARNING") {
@@ -114,7 +115,7 @@ app.get("/todos/", async (request, response) => {
       );
     } else {
       response.status(400);
-      response.send("Invalid Category");
+      response.send("Invalid Todo Category");
     }
   } else if (priority !== undefined) {
     if (priority === "HIGH" || priority === "LOW" || priority === "MEDIUM") {
@@ -134,7 +135,7 @@ app.get("/todos/", async (request, response) => {
       );
     } else {
       response.status(400);
-      response.send("Invalid Priority");
+      response.send("Invalid Todo Priority");
     }
   } else if (search_q !== undefined) {
     const getTodo = `select * from todo where todo like '%${search_q}%'; `;
@@ -195,22 +196,22 @@ app.post("/todos/", async (request, response) => {
   const { id, todo, priority, category, status, dueDate } = request.body;
   if (status !== "TO DO" && status !== "IN PROGRESS" && status !== "DONE") {
     response.status(400);
-    response.send("Invalid Status");
+    response.send("Invalid Todo Status");
   } else if (
     category !== "WORK" &&
     category !== "HOME" &&
     category !== "LEARNING"
   ) {
     response.status(400);
-    response.send("Invalid Category");
+    response.send("Invalid Todo Category");
   } else if (
     priority !== "HIGH" &&
     priority !== "LOW" &&
     priority !== "MEDIUM"
   ) {
     response.status(400);
-    response.send("Invalid Priority");
-  } else {
+    response.send("Invalid Todo Priority");
+  }  else {
     const addTodo = `insert into todo (id,todo,priority,status,category,due_date) values(${id},'${todo}','${priority}','${status}','${category}','${dueDate}');`;
     await db.run(addTodo);
     response.send("Todo Successfully Added");
@@ -228,7 +229,7 @@ app.put("/todos/:todoId/", async (request, response) => {
       response.send("Status Updated");
     } else {
       response.status(400);
-      response.send("Invalid Status");
+      response.send("Invalid Todo Status");
     }
   } else if (category !== undefined) {
     if (category === "WORK" || category === "HOME" || category === "LEARNING") {
@@ -237,7 +238,7 @@ app.put("/todos/:todoId/", async (request, response) => {
       response.send("Category Updated");
     } else {
       response.status(400);
-      response.send("Invalid Category");
+      response.send("Invalid Todo Category");
     }
   } else if (priority !== undefined) {
     if (priority === "HIGH" || priority === "LOW" || priority === "MEDIUM") {
@@ -246,7 +247,7 @@ app.put("/todos/:todoId/", async (request, response) => {
       response.send("Priority Updated");
     } else {
       response.status(400);
-      response.send("Invalid Priority");
+      response.send("Invalid Todo Priority");
     }
   } else if (todo !== undefined) {
     const updateTodo = `update todo set todo='${todo}' where id = ${todoId} ;`;
@@ -255,7 +256,7 @@ app.put("/todos/:todoId/", async (request, response) => {
   } else if (dueDate !== undefined) {
     const updateTodo = `update todo set due_date='${dueDate}' where id = ${todoId} ;`;
     await db.run(updateTodo);
-    response.send("dueDate Updated");
+    response.send("Due Date Updated");
   }
 });
 
